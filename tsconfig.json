@@ -6,12 +6,12 @@
     "lib": ["ES2020", "DOM"],
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "types": ["firefox-webext-browser", "node"],
+    "types": ["firefox-webext-browser"],
     "outDir": "dist",
     "rootDir": "src",
     "declaration": true,
     "skipLibCheck": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/__fixtures__/**/*"]
 }

@@ -49,18 +49,27 @@ describe("isThreadmarkPage", () => {
     const url = "https://forums.spacebattles.com/threads/general.99/reader/1/";
     expect(isThreadmarkPage(doc, url)).toBe(false);
   });
+
+  it("returns false (does not throw) on a malformed URL", () => {
+    const doc = loadFixture("sb-threadmark.html");
+    expect(isThreadmarkPage(doc, "not-a-url")).toBe(false);
+  });
 });
 
 // ── Content extraction — SB ───────────────────────────────────────────────────
 
 describe("parseThreadmarkPage (SB)", () => {
   const url = "https://forums.spacebattles.com/threads/the-metropolitan-man.12345/reader/2/";
-  let result: ReturnType<typeof parseThreadmarkPage>;
 
   it("parses without throwing", () => {
     const doc = loadFixture("sb-threadmark.html");
-    result = parseThreadmarkPage(doc, url);
-    expect(result).toBeDefined();
+    expect(parseThreadmarkPage(doc, url)).toBeDefined();
+  });
+
+  it("sets currentUrl to the passed-in URL", () => {
+    const doc = loadFixture("sb-threadmark.html");
+    const r = parseThreadmarkPage(doc, url);
+    expect(r.currentUrl).toBe(url);
   });
 
   it("extracts story title", () => {
@@ -242,5 +251,35 @@ describe("parseThreadmarkPage errors", () => {
     expect(() =>
       parseThreadmarkPage(doc, "https://forums.spacebattles.com/threads/x.1/reader/1/")
     ).toThrow("Content element not found");
+  });
+});
+
+// ── Body text whitespace normalization ────────────────────────────────────────
+
+describe("extractBodyText whitespace normalization", () => {
+  it("collapses runs of 3+ newlines to a double newline", () => {
+    const doc = new DOMParser().parseFromString(
+      `<html><body>
+        <h1 class="p-title-value">Title</h1>
+        <nav class="threadmarkNavigation">
+          <span class="threadmarkNav--current">Ch 1</span>
+        </nav>
+        <article class="message-body">
+          <div class="bbWrapper">First paragraph.
+
+
+
+Fourth paragraph after triple blank line.</div>
+        </article>
+      </body></html>`,
+      "text/html"
+    );
+    const r = parseThreadmarkPage(
+      doc,
+      "https://forums.spacebattles.com/threads/x.1/reader/1/"
+    );
+    expect(r.bodyText).not.toMatch(/\n{3,}/);
+    expect(r.bodyText).toContain("First paragraph.");
+    expect(r.bodyText).toContain("Fourth paragraph after triple blank line.");
   });
 });

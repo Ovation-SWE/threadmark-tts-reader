@@ -70,8 +70,8 @@ const SITE_HOSTNAMES: Record<string, Site> = {
   "www.questionablequesting.com": "qq",
 };
 
-// /threads/some-title.12345/reader/67/  →  ["12345", "67"]
-const READER_URL_RE = /\/threads\/[^/]+\.(\d+)\/reader\/(\d+)\//;
+// /threads/some-title.12345/reader/67/  →  [threadmark-index as group 1]
+const READER_URL_RE = /\/threads\/[^/]+\.(?:\d+)\/reader\/(\d+)\//;
 
 function detectSite(hostname: string): Site | null {
   return SITE_HOSTNAMES[hostname] ?? null;
@@ -129,7 +129,10 @@ function extractBodyText(el: Element): string {
  * reader page for one of the three supported sites.
  */
 export function isThreadmarkPage(doc: Document, url: string): boolean {
-  const hostname = new URL(url).hostname;
+  let hostname: string;
+  try { hostname = new URL(url).hostname; }
+  catch { return false; }
+
   const site = detectSite(hostname);
   if (!site) return false;
 
@@ -154,7 +157,7 @@ export function parseThreadmarkPage(doc: Document, url: string): ThreadmarkPage 
 
   const match = READER_URL_RE.exec(url);
   if (!match) throw new Error(`URL does not match XenForo reader pattern: ${url}`);
-  const threadmarkIndex = parseInt(match[2] ?? "0", 10);
+  const threadmarkIndex = parseInt(match[1] ?? "0", 10);
 
   const storyTitleEl = doc.querySelector(sel.storyTitle);
   if (!storyTitleEl) throw new Error(`Story title element not found (selector: ${sel.storyTitle})`);
