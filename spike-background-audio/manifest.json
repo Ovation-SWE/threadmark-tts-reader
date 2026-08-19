@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "TTS Background Spike",
+  "version": "0.1.0",
+  "description": "Spike: does <audio> + Media Session API survive Firefox Android backgrounding?",
+  "permissions": [
+    "https://translate.google.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://forums.spacebattles.com/*",
+        "https://forums.sufficientvelocity.com/*",
+        "https://www.questionablequesting.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
