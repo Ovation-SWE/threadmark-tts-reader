@@ -4,9 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Threadmark TTS Reader</title>
+  <style>
+    body { font-family: sans-serif; width: 240px; padding: 12px; margin: 0; background: #1a1a2e; color: #e8e8e8; }
+    #no-story { color: #888; font-size: 13px; padding: 8px 0; }
+    #story-info { display: none; }
+    #story-title { font-weight: bold; margin-bottom: 2px; font-size: 14px; }
+    #chapter-title { color: #aaa; font-size: 11px; margin-bottom: 12px; }
+    .controls { display: flex; gap: 8px; }
+    .controls button {
+      flex: 1; padding: 8px 4px; cursor: pointer; border: none; border-radius: 4px;
+      background: #333; color: #e8e8e8; font-size: 14px;
+    }
+    .controls button:hover { background: #555; }
+    #error-msg { color: #ff6b6b; font-size: 11px; margin-top: 8px; display: none; }
+  </style>
 </head>
 <body>
-  <p>Threadmark TTS Reader — popup stub</p>
+  <div id="no-story">Open a SB / SV / QQ threadmark page to begin.</div>
+  <div id="story-info">
+    <div id="story-title"></div>
+    <div id="chapter-title"></div>
+    <div class="controls">
+      <button id="btn-play">▶ Play</button>
+      <button id="btn-stop">■ Stop</button>
+    </div>
+    <div id="error-msg"></div>
+  </div>
   <script src="./index.ts" type="module"></script>
 </body>
 </html>

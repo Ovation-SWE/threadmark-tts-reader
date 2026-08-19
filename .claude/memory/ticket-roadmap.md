@@ -7,9 +7,9 @@ metadata:
 
 TICKET-1 (scaffold + XenForo parser) — COMPLETE as of 2026-08-19. PR #1 merged; review findings addressed (tsconfig node type leak, regex capture group, tsconfig.test.json module override).
 
-TICKET-2 (TTS engine + audio player) — NOT STARTED. Parallel with TICKET-3.
-TICKET-3 (playback state persistence + resume) — PLANNED. Plan at `.claude/plans/ticket-3-playback-state-persistence.md`.
-TICKET-4 (orchestration + popup UI) — NOT STARTED. Depends on TICKET-2 and TICKET-3.
+TICKET-2 (TTS engine + audio player) — COMPLETE as of 2026-08-19. 85 tests passing total.
+TICKET-3 (playback state persistence + resume) — COMPLETE as of 2026-08-19. Merged with TICKET-2 (515f322).
+TICKET-4 (orchestration + popup UI) — PLANNED. Plan at `.claude/plans/ticket-4-orchestration-popup-ui.md`.
 
 Dependency graph:
 ```
