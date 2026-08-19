@@ -64,22 +64,26 @@ export async function* ttsChunks(text: string): AsyncGenerator<TtsChunk> {
   let charOffset = 0;
   let prevBlobUrl: string | null = null;
 
-  for (const chunk of chunks) {
+  try {
+    for (const chunk of chunks) {
+      if (prevBlobUrl !== null) {
+        URL.revokeObjectURL(prevBlobUrl);
+      }
+
+      const blob = await fetchBlobWithRetry(ttsUrl(chunk));
+      const blobUrl = URL.createObjectURL(blob);
+      prevBlobUrl = blobUrl;
+
+      yield { blobUrl, charOffset };
+
+      // Advance by chunk length + 1 for the space boundary (approximate).
+      charOffset += chunk.length + 1;
+    }
+  } finally {
+    // Runs on normal completion AND when the consumer calls generator.return()
+    // (e.g. AudioPlayer.stop() exits for-await early), ensuring no blob URL leak.
     if (prevBlobUrl !== null) {
       URL.revokeObjectURL(prevBlobUrl);
     }
-
-    const blob = await fetchBlobWithRetry(ttsUrl(chunk));
-    const blobUrl = URL.createObjectURL(blob);
-    prevBlobUrl = blobUrl;
-
-    yield { blobUrl, charOffset };
-
-    // Advance by chunk length + 1 for the space boundary (approximate).
-    charOffset += chunk.length + 1;
-  }
-
-  if (prevBlobUrl !== null) {
-    URL.revokeObjectURL(prevBlobUrl);
   }
 }

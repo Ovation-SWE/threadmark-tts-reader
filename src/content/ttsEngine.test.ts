@@ -149,4 +149,21 @@ describe("ttsChunks", () => {
     expect(chunks).toHaveLength(0);
     expect(fetch).not.toHaveBeenCalled();
   });
+
+  it("revokes blob URL when generator is abandoned early (stop scenario)", async () => {
+    const first = "a".repeat(180);
+    const second = "b".repeat(10);
+    const text = `${first} ${second}`;
+    const gen = ttsChunks(text);
+
+    // Consume first chunk — gets its blob URL
+    const result = await gen.next();
+    const firstBlobUrl = result.value.blobUrl;
+
+    // Abandon the generator mid-stream (simulates AudioPlayer.stop())
+    await gen.return(undefined);
+
+    // finally block should have revoked the last yielded URL
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith(firstBlobUrl);
+  });
 });
