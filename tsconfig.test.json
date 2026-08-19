@@ -3,5 +3,6 @@
   "compilerOptions": {
     "types": ["node", "vitest/globals"]
   },
-  "include": ["src/**/*.test.ts", "src/__fixtures__/**/*"]
+  "include": ["src/**/*.test.ts", "src/__fixtures__/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
