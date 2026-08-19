@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+  "name": "Threadmark TTS Reader",
+  "version": "0.1.0",
+  "description": "Reads serialized fiction aloud on SB, SV, and QQ, threadmark by threadmark.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "https://translate.google.com/*",
+    "https://forums.spacebattles.com/*",
+    "https://forums.sufficientvelocity.com/*",
+    "https://www.questionablequesting.com/*"
+  ],
+  "background": {
+    "scripts": ["src/background/index.ts"],
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://forums.spacebattles.com/threads/*/reader/*",
+        "https://forums.sufficientvelocity.com/threads/*/reader/*",
+        "https://www.questionablequesting.com/threads/*/reader/*"
+      ],
+      "js": ["src/content/index.ts"],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_action": {
+    "default_popup": "src/popup/index.html",
+    "default_title": "Threadmark TTS Reader"
+  },
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png"
+  }
+}
