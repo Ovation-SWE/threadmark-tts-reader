@@ -1,0 +1,26 @@
+{
+  "name": "threadmark-tts-reader",
+  "version": "0.1.0",
+  "description": "Firefox extension that reads serialized fiction aloud, threadmark by threadmark",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/firefox-webext-browser": "^143.0.0",
+    "@types/node": "^26.2.0",
+    "@vitest/browser": "^4.1.11",
+    "jsdom": "^30.0.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.1",
+    "vite-plugin-web-extension": "^4.5.1",
+    "vitest": "^4.1.11",
+    "webextension-polyfill": "^0.12.0"
+  }
+}
