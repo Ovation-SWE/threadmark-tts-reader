@@ -192,6 +192,27 @@ describe("ThrottledStateWriter — throttle behaviour", () => {
     await expect(writer.flush()).resolves.toBeUndefined();
   });
 
+  it("enqueue after trailing-edge write fires triggers immediate leading-edge write in next window", async () => {
+    const writer = new ThrottledStateWriter(5000);
+    writer.enqueue(STATE); // leading-edge write, lastWriteAt = now
+    await Promise.resolve();
+
+    const state2: PlaybackState = { ...STATE, charOffset: 50 };
+    writer.enqueue(state2); // schedules trailing timer
+
+    vi.advanceTimersByTime(5000); // trailing fires → lastWriteAt updated
+    await Promise.resolve();
+
+    vi.advanceTimersByTime(5000); // advance another full window → elapsed ≥ 5000
+
+    const state3: PlaybackState = { ...STATE, charOffset: 75 };
+    writer.enqueue(state3); // new window: should fire immediately (leading-edge)
+    await Promise.resolve();
+
+    const loaded = await loadPlaybackState(STATE.storyId);
+    expect(loaded?.charOffset).toBe(75);
+  });
+
   it("destroy() cancels the timer; subsequent flush resolves without writing", async () => {
     const writer = new ThrottledStateWriter(5000);
     writer.enqueue(STATE);

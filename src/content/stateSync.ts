@@ -28,6 +28,7 @@ export async function clearPlaybackState(storyId: string): Promise<void> {
   await browser.storage.local.remove(PLAYBACK_KEY(storyId));
 }
 
+// Callers should guard against url === "" on the navigate branch (indicates corrupted state).
 export function resolveResume(
   currentUrl: string,
   state: PlaybackState | null
@@ -72,8 +73,8 @@ export class ThrottledStateWriter {
     if (this.pending) {
       const state = this.pending;
       this.pending = null;
-      this.lastWriteAt = Date.now();
       await savePlaybackState(state);
+      this.lastWriteAt = Date.now(); // stamp after success so a storage error doesn't advance the clock
     }
   }
 
@@ -100,6 +101,7 @@ export async function loadPreferences(): Promise<UserPreferences> {
   return { ...DEFAULT_PREFS, ...saved };
 }
 
+// single-caller assumption; concurrent calls may race on the read-modify-write
 export async function savePreferences(prefs: Partial<UserPreferences>): Promise<void> {
   const current = await loadPreferences();
   await browser.storage.sync.set({ [PREFS_KEY]: { ...current, ...prefs } });
